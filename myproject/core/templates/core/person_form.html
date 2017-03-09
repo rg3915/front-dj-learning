@@ -10,7 +10,7 @@
     <h2>Novo Contato</h2>
 </div>
 
-<form class="form-horizontal" action="." method="POST">
+<form id="ajaxform" class="form-horizontal" action="{% url 'core:person_add' %}" method="POST">
     {% csrf_token %}
     {{ form.non_fields_errors }}
     <div class="form-group">
@@ -100,5 +100,29 @@
       </div>
     </div>
 </form>
+
+<script>
+  //callback handler for form submit
+  $("#ajaxform").submit(function(e)
+  {
+      var postData = $(this).serialize();
+      var formURL = $(this).attr("action");
+      $.ajax(
+      {
+          url : formURL,
+          type: "POST",
+          data : postData,
+          success:function(data, textStatus, jqXHR) 
+          {
+              $("#ajaxform").html(data);
+          },
+          error: function(jqXHR, textStatus, errorThrown) 
+          {
+              alert('Deu erro!');
+          }
+      });
+      e.preventDefault(); //STOP default action
+  });
+</script>
 
 {% endblock content %}
