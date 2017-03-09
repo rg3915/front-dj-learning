@@ -22,6 +22,11 @@
 <h2><h2><i class="fa fa-user"></i> Lista de Contatos</h2>
 </div>
 
+<style>
+  .hide-phone{
+    display: none;
+  }
+</style>
 <div>
 {% if person_list %}
   <table class="table table-striped">
@@ -38,15 +43,10 @@
       <tr>
         <td><a href="{{ person.get_absolute_url }}">{{ person.full_name }}</a></td>
         <td>{{ person.email }}</td>
-        {% if person.phone_set.first %}
-          <td>{{ person.phone_set.first }} 
-            {% if person.phone_set.count > 1 %}
-              <a href="{{ person.get_absolute_url }}">+{{ person.phone_set.count|add:"-1" }}</a>
-            {% endif %}
-          </td>
-        {% else %}
-          <td>---</td>
-        {% endif %}
+        <td><button class='js-phone'>Phone</button></td>
+        {% for p in person.phone_set.all %}
+          <td class='hide-phone'>{{ p }}</td>
+        {% endfor %}
         <td>{{ person.get_uf_display }}</td>
       </tr>
     {% endfor %}
@@ -56,6 +56,16 @@
   <p class="alert alert-warning">Sem itens na lista.</p>
 {% endif %}
 </div>
+
+<script>
+  $('.js-phone').click(function(){
+    var $this = $(this)
+    $this.parent().siblings().filter('.hide-phone').show()
+    $this.hide()
+
+  });
+</script>
+
 
 <hr>
 <div>
