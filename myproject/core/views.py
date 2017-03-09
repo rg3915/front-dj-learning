@@ -1,6 +1,7 @@
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.core.urlresolvers import reverse_lazy as r
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import ListView, DetailView
 from django.views.generic import UpdateView, DeleteView
 from .mixins import NameSearchMixin
 from .models import Person
@@ -18,8 +19,22 @@ class PersonList(NameSearchMixin, ListView):
 
 person_detail = DetailView.as_view(model=Person)
 
-person_create = CreateView.as_view(model=Person, form_class=PersonForm)
+
+def person_create(request):
+    if request.method == 'POST':
+        if request.is_ajax():
+            form = PersonForm(request.POST)
+            if form.is_valid():
+                form.save()
+                return HttpResponse('OK')
+            else:
+                return HttpResponse(status=400)
+        else:
+            return render(request, 'core/person_form.html', {'form': PersonForm(request.POST)})
+    return render(request, 'core/person_form.html', {'form': PersonForm()})
+
 
 person_update = UpdateView.as_view(model=Person, form_class=PersonForm)
 
-person_delete = DeleteView.as_view(model=Person, success_url=r('core:person_list'))
+person_delete = DeleteView.as_view(
+    model=Person, success_url=r('core:person_list'))
