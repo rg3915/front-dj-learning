@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load bootstrap %}
 
 {% block title %}Contatos{% endblock title %}
 
@@ -6,11 +7,9 @@
 
 <form class="navbar-form navbar-right" action="." method="get">
     <!-- add -->
-    <a href="{% url 'core:person_add' %}">
-        <button id="new" type="button" class="btn btn-primary">
-            <span class="glyphicon glyphicon-plus"></span> Adicionar
-        </button>
-    </a>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-person">
+      <span class="glyphicon glyphicon-plus"></span> Adicionar
+    </button>
     <!-- search form -->
     <div class="form-group">
       <input id="search_box" name="search_box" type="text" placeholder="Localizar..." class="form-control">
@@ -58,9 +57,62 @@
 {% endif %}
 </div>
 
+<!-- Modal -->
+<div id="modal-person" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form action="">
+
+        <div class="modal-header">
+          <button class="close" aria-label="Close" data-dismiss="modal" type="button">
+            <span aria-hidden="True">&times;</span>
+          </button>
+          <h4 class="modal-title">Novo</h4>
+        </div> <!-- header -->
+
+        <div class="modal-body">
+          {% csrf_token %}
+          {{ form|bootstrap }}
+        </div> <!-- body -->
+
+        <div class="modal-footer">
+          <button type="submit" id="add_person" name="add_person" class="btn btn-primary">Salvar</button>
+          <button id="dismiss_person" type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        </div> <!-- footer -->
+
+      </form>
+    </div>
+  </div>
+</div>
 
 
 <script>
+  // callback handler for form submit
+  $("#modal-person").submit(function(e)
+  {
+      var postData = $(this).serialize();
+      var formURL = "{% url 'core:person_add' %}";
+      console.log(postData);
+      console.log(formURL);
+
+      $.ajax(
+      {
+          url : formURL,
+          type: "POST",
+          data : postData,
+          success:function(data, textStatus, jqXHR) 
+          {
+              $("#modal-person").html(data);
+          },
+          error: function(jqXHR, textStatus, errorThrown) 
+          {
+              alert('Deu erro!');
+          }
+      });
+      e.preventDefault(); //STOP default action
+  });
+
+  // show phones
   $('.js-phone').click(function(){
     var $this = $(this)
     $this.parent().siblings().filter('.hide-phone').show()

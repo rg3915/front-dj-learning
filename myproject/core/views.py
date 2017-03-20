@@ -16,6 +16,11 @@ class PersonList(NameSearchMixin, ListView):
     model = Person
     paginate_by = 5
 
+    def get_context_data(self, **kwargs):
+        context = super(PersonList, self).get_context_data(**kwargs)
+        context['form'] = PersonForm()
+        return context
+
 
 person_detail = DetailView.as_view(model=Person)
 
