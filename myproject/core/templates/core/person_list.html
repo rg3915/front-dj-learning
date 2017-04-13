@@ -88,13 +88,10 @@
 
 <script>
   // callback handler for form submit
-  $("#modal-person").submit(function(e)
-  {
+  $("#modal-person form").submit(function(e) {
+      e.preventDefault(); //STOP default action
       var postData = $(this).serialize();
       var formURL = "{% url 'core:person_add' %}";
-      console.log(postData);
-      console.log(formURL);
-
       $.ajax(
       {
           url : formURL,
@@ -102,14 +99,14 @@
           data : postData,
           success:function(data, textStatus, jqXHR) 
           {
-              $("#modal-person").html(data);
+              $("#modal-person").modal('hide');
+              location.href = '/person/';
           },
           error: function(jqXHR, textStatus, errorThrown) 
           {
               alert('Deu erro!');
           }
       });
-      e.preventDefault(); //STOP default action
   });
 
   // show phones
