@@ -7,6 +7,7 @@ urlpatterns = [
     path('', c.home, name='home'),
     path('person/', c.PersonList.as_view(), name='person_list'),
     path('person/add/', c.person_create, name='person_add'),
+    path('person/phone/add/', c.person_phone_create, name='person_phone_create'),
     path('person/<int:pk>/', c.person_detail, name='person_detail'),
     path('person/<int:pk>/phones/', c.person_phones, name='person_phones'),
     path('person/<int:pk>/edit/', c.person_update, name='person_edit'),

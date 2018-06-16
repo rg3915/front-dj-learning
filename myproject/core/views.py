@@ -52,3 +52,13 @@ def person_phones(request, pk):
     phones = Phone.objects.filter(person=pk)
     data = serializers.serialize('json', phones)
     return HttpResponse(data, content_type='application/json')
+
+
+def person_phone_create(request):
+    if request.is_ajax():
+        if request.method == 'POST':
+            print(request)
+    print(request)
+    print(request.POST)
+    data = {}
+    return HttpResponse(data, content_type='application/json')

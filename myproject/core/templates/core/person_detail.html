@@ -6,6 +6,33 @@
 
 {% block content %}
 
+<style>
+  .span-is-link {
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .badge{
+    display:inline-block;
+    padding:.25em .4em;
+    /*font-size:75%;*/
+    font-weight:700;
+    line-height:1;
+    text-align:center;
+    white-space:nowrap;
+    vertical-align:baseline;
+    border-radius:.25rem
+  }
+  .badge-success{
+    color:#fff;
+    background-color:#4dbd74
+  }
+  .badge-success[href]:focus,.badge-success[href]:hover{
+    color:#fff;
+    text-decoration:none;
+    background-color:#3a9d5d
+  }
+</style>
+
 <div id="app" data-pk="{{ person.pk }}">
 
 <ul class="breadcrumb">
@@ -42,6 +69,14 @@
 
   <table class="table table-user-information">
     <tbody>
+      <tr>
+        <th></th>
+        <td>
+          <span class="span-is-link badge badge-success" data-target="#phoneModal" data-toggle="modal">
+            <i class="fa fa-plus"> Adicionar</i>
+          </span>
+        </td>
+      </tr>
       {% if object.phone_set.all %}
         <tr v-for="phone in phones">
             <th class="col-md-3 text-right"><span class="glyphicon glyphicon-earphone"></span></th>
@@ -118,6 +153,39 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div id="phoneModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          ×
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+          Adicionar Telefone
+        </h4>
+      </div>
+      <form action="." method="POST">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="control-label" for="id_phone">Telefone</label>
+            <input id="id_phone" name="phone" v-model="phone" type="text" class="form-control" maxlength="15" placeholder="(11) 98765-4321" autofocus />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" @click="save_phone" data-dismiss="modal">
+            Salvar
+          </button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">
+            Fechar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 </div>
 
 {% endblock content %}
@@ -125,12 +193,15 @@
 {% block js %}
 
   <script>
+    axios.defaults.xsrfCookieName = 'csrftoken'
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken'
     var app = new Vue({
       el: '#app',
       delimiters: ['${', '}'],
       data: {
+        person: '',
         phones: [],
-        person: ''
+        phone: ''
       },
       methods: {
         get_phones(page){
@@ -140,6 +211,15 @@
               return {phone: item.fields.phone, phone_type: item.fields.phone_type}
             })
           })
+        },
+        save_phone(){
+          let dict = {person: this.person, phone: this.phone}
+          console.log(dict)
+          axios.post('/person/phone/add/', dict).then(
+            (response) => {
+              console.log(response)
+            }
+          )
         }
       },
       mounted(){
