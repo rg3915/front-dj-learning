@@ -43,7 +43,7 @@
       <tr>
         <td><a href="{{ person.get_absolute_url }}">{{ person.full_name }}</a></td>
         <td>{{ person.email }}</td>
-        <td><button class='btn btn-default js-phone'>Phone</button></td>
+        <td><button class='btn btn-default js-phone' data-url="{% url 'core:person_phones' person.pk %}">Phone</button></td>
         {% for p in person.phone_set.all %}
           <td class='hide-phone'>{{ p }}</td>
         {% endfor %}
@@ -85,6 +85,33 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div id="phoneModal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+          ×
+        </button>
+        <h4 class="modal-title" id="myModalLabel">
+          Phones
+        </h4>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <tbody id="phoneBody"></tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <script>
   // callback handler for form submit
@@ -112,9 +139,31 @@
   // show phones
   $('.js-phone').click(function(){
     var $this = $(this)
-    $this.parent().siblings().filter('.hide-phone').show()
-    $this.hide()
-
+    // $this.parent().siblings().filter('.hide-phone').show()
+    // $this.hide()
+    let url = $(this).data('url');
+    $.ajax({
+      url: url,
+      type: 'GET',
+      success: function(response) {
+        if (response.length != 0) {
+          $('#phoneModal').modal('show');
+          $('#phoneBody').empty();
+          var html = ''
+          for (var i = 0; i < response.length; i++) {
+            html += '<tr>'
+            html += '<td>' + response[i]['fields']['phone'] + '</td>'
+            html += '</tr>'
+          }
+          $('#phoneBody').append(html)
+        } else {
+          alert('No Phone');
+        }
+      },
+      error: function(xhr) {
+        console.log('Error');
+      },
+    })
   });
 </script>
 

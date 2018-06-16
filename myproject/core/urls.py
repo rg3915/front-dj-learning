@@ -8,6 +8,7 @@ urlpatterns = [
     path('person/', c.PersonList.as_view(), name='person_list'),
     path('person/add/', c.person_create, name='person_add'),
     path('person/<int:pk>/', c.person_detail, name='person_detail'),
+    path('person/<int:pk>/phones/', c.person_phones, name='person_phones'),
     path('person/<int:pk>/edit/', c.person_update, name='person_edit'),
     path('person/<int:pk>/delete/', c.person_delete, name='person_delete'),
 ]
