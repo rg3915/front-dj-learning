@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<div id="app">
+<div id="app" data-pk="{{ person.pk }}">
 
 <ul class="breadcrumb">
   <li><a href="{% url 'core:home' %}">Home</a> <span class="divider"></span></li>
@@ -130,14 +130,12 @@
       delimiters: ['${', '}'],
       data: {
         phones: [],
-        person: {{ person.pk }}
+        person: ''
       },
       methods: {
         get_phones(page){
-          console.log(this);
           axios.get('/person/' + page + '/phones/')
           .then((result) => {
-            console.log(result.data);
             this.phones = result.data.map((item) => {
               return {phone: item.fields.phone, phone_type: item.fields.phone_type}
             })
@@ -145,6 +143,7 @@
         }
       },
       mounted(){
+        this.person = this.$el.getAttribute('data-pk')
         this.get_phones(this.person)
       }
     })
