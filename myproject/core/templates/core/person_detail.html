@@ -6,6 +6,8 @@
 
 {% block content %}
 
+<div id="app">
+
 <ul class="breadcrumb">
   <li><a href="{% url 'core:home' %}">Home</a> <span class="divider"></span></li>
   <li><a href="{% url 'core:person_list' %}">Contatos</a> <span class="divider"></span></li>
@@ -41,12 +43,16 @@
   <table class="table table-user-information">
     <tbody>
       {% if object.phone_set.all %}
-        {% for phone in object.phone_set.all %}
+        <tr v-for="phone in phones">
+            <th class="col-md-3 text-right"><span class="glyphicon glyphicon-earphone"></span></th>
+          <td>${ phone.phone } <i class="fa fa-whatsapp ok"></i></td>
+        </tr>
+        <!-- { for phone in object.phone_set.all %}
           <tr>
             <th class="col-md-3 text-right"><span class="glyphicon glyphicon-earphone"></span></th>
-            <td>{{ phone.phone }} <i class="fa fa-whatsapp ok"></i> {{ phone.get_phone_type_display }}</td>
+            <td>{ phone.phone }} <i class="fa fa-whatsapp ok"></i> { phone.get_phone_type_display }}</td>
           </tr>
-        {% endfor %}
+        { endfor %} -->
       {% else %}
         <tr>
           <th class="col-md-3 text-right"><span class="glyphicon glyphicon-earphone"></span></th>
@@ -112,5 +118,36 @@
   </div>
 </div>
 
+</div>
 
 {% endblock content %}
+
+{% block js %}
+
+  <script>
+    var app = new Vue({
+      el: '#app',
+      delimiters: ['${', '}'],
+      data: {
+        phones: [],
+        person: {{ person.pk }}
+      },
+      methods: {
+        get_phones(page){
+          console.log(this);
+          axios.get('/person/' + page + '/phones/')
+          .then((result) => {
+            console.log(result.data);
+            this.phones = result.data.map((item) => {
+              return {phone: item.fields.phone, phone_type: item.fields.phone_type}
+            })
+          })
+        }
+      },
+      mounted(){
+        this.get_phones(this.person)
+      }
+    })
+  </script>
+
+{% endblock js %}
