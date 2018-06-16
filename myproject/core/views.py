@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.core.urlresolvers import reverse_lazy as r
+from django.urls import reverse_lazy as r
 from django.views.generic import ListView, DetailView
 from django.views.generic import UpdateView, DeleteView
 from .mixins import NameSearchMixin
