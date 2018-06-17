@@ -1,5 +1,7 @@
+import json
 from django.core import serializers
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy as r
 from django.views.generic import ListView, DetailView
@@ -55,10 +57,8 @@ def person_phones(request, pk):
 
 
 def person_phone_create(request):
-    if request.is_ajax():
-        if request.method == 'POST':
-            print(request)
-    print(request)
-    print(request.POST)
-    data = {}
+    if request.method == 'POST':
+        print(request.POST)
+        result = json.dumps(request.POST)
+    data = {'response': 'response'}
     return HttpResponse(data, content_type='application/json')
