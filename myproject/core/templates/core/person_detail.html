@@ -215,13 +215,16 @@
         },
         save_phone(){
           let bodyFormData = new FormData()
-          bodyFormData.set('person', this.person)
-          bodyFormData.set('phone', this.phone)
+          bodyFormData.append('person', this.person)
+          bodyFormData.append('phone', this.phone)
           // let config = {headers: {'Content-Type': 'multipart/form-data'}}
-          axios.post('/person/phone/add/', bodyFormData).then((response) => {
-              console.log(response)
-            }
-          )
+          axios.post('/person/phone/add/', bodyFormData)
+          .then((response) => {
+            this.phones.push(
+              {phone: response.data}
+            )
+            this.phone = ''
+          })
         }
       },
       mounted(){
