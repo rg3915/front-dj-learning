@@ -214,9 +214,11 @@
           })
         },
         save_phone(){
-          let dict = JSON.stringify({person: this.person, phone: this.phone})
-          axios.post('/person/phone/add/', dict).then(
-            (response) => {
+          let bodyFormData = new FormData()
+          bodyFormData.set('person', this.person)
+          bodyFormData.set('phone', this.phone)
+          // let config = {headers: {'Content-Type': 'multipart/form-data'}}
+          axios.post('/person/phone/add/', bodyFormData).then((response) => {
               console.log(response)
             }
           )

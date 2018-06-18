@@ -58,7 +58,9 @@ def person_phones(request, pk):
 
 def person_phone_create(request):
     if request.method == 'POST':
-        print(request.POST)
-        result = json.dumps(request.POST)
-    data = {'response': 'response'}
+        person_pk = request.POST['person']
+        person = Person.objects.get(pk=person_pk)
+        phone = request.POST['phone']
+        Phone.objects.create(person=person, phone=phone)
+        data = phone
     return HttpResponse(data, content_type='application/json')
